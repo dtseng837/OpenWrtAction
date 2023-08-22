@@ -19,6 +19,20 @@ sed -i '/$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF./ d' package/lean/default-settings/fi
 # Temporary repair https://github.com/coolsnowwolf/lede/issues/8423
 # sed -i 's/^\s*$[(]call\sEnsureVendoredVersion/#&/' feeds/packages/utils/dockerd/Makefile
 
+# 修改主机名字，把OpenWrt-123修改你喜欢的就行（不能纯数字或者使用中文）
+sed -i '/uci commit system/i\uci set system.@system[0].hostname='Kinsum'' package/lean/default-settings/files/zzz-default-settings
+
+sed -i "s/hostname='OpenWrt'/hostname='Kinsum" package/base-files/files/bin/config_generate
+cat package/base-files/files/bin/config_generate |grep hostname=
+echo '=========Alert hostname OK!========='
+
+# 版本号里显示一个自己的名字（kinsum build $(TZ=UTC-8 date "+%Y.%m.%d") @ 这些都是后增加的）
+# sed -i " s/OpenWrt OpenWrt Build by Kinsum $(TZ=UTC-8 date "+%Y.%m.%d") " package/lean/default-settings/files/zzz-default-settings
+sed -i "s/OpenWrt /Kinsum Build $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" package/lean/default-settings/files/zzz-default-settings
+
+
+# 添加CPU温度显示
+sed -i 's/or "1"%>/or "1"%> ( <%=luci.sys.exec("expr `cat \/sys\/class\/thermal\/thermal_zone0\/temp` \/ 1000") or "?"%> \&#8451; ) /g' feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 
 # 添加新主题
 rm -rf ./feeds/luci/themes/luci-theme-argon
